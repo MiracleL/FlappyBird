@@ -1,1 +1,0 @@
-java -cp bin com.hsj.bird.World
