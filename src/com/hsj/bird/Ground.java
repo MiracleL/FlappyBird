@@ -25,7 +25,7 @@ public class Ground {
 		x = 0;
 	}
 	
-	public void step(){
+	public void step(){   //µÿ√Ê“∆∂Ø
 		x--;
 		if(x<= -(111)){
 			x=0;

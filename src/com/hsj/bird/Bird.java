@@ -18,11 +18,11 @@ public class Bird {
 	/** 当前图片序号 */
 	int index = 0;
 	/** 重力加速度 */
-	final double g; 
+	double g; 
 	/** 时间间隔秒 */
 	final double t;
 	/** 初始上抛速度 */
-	final double v0;
+	double v0;
 	/** 当前上抛速度 */
 	double speed;
 	/** 移动距离 */
@@ -30,10 +30,26 @@ public class Bird {
 	/** 鸟的范围, 鸟的范围是一个正方形区域, 中心点是x,y */
 	int size = 40;
 	
+	int model=1;
+	
+	public static int first=0;  
+	
 	public Bird() throws Exception {
+		
 		this.g = 4; //重力加速度
-		this.t = 0.25; //每次计算的间隔时间
 		this.v0 = 20; //初始上抛速度
+		
+//		if (model==1)  //q_learning模式
+//		{
+//			this.g = 4; //重力加速度
+//			this.v0 = 20; //初始上抛速度
+//		}
+//		else
+//		{
+//			this.g = 4; //重力加速度
+//			this.v0 = 20; //初始上抛速度
+//		}
+		this.t = 0.25; //每次计算的间隔时间
 		x = 132; //鸟的初始位置
 		y = 275; //鸟的初始位置
 		//加载动画帧
@@ -80,7 +96,7 @@ public class Bird {
 		Graphics2D g2 = (Graphics2D)g;
 		//旋转绘图坐标系, 绘制
 		g2.rotate(angle, this.x, this.y);
-		//以x,y 为中心绘制图片
+		//以x,y为中心绘制图片
 		int x = this.x-image.getWidth()/2;
 		int y = this.y-image.getHeight()/2;
 		g.drawImage(image, x, y, null);
@@ -100,7 +116,7 @@ public class Bird {
 	/** 判断鸟是否与柱子和地发生碰撞 */
 	public boolean hit(Column column1, Column column2, Ground ground) {
 		//碰到地面
-		if(y-size/2 >= ground.y){
+		if(y+size/2 >= ground.y){
 			return true;
 		}
 		//碰到柱子
@@ -116,6 +132,147 @@ public class Bird {
 			return true;
 		}
 		return false;
+	}
+	
+	
+	//选择当前小鸟面对的column
+	public int chooseCurrentColumn(Column column1, Column column2)
+	{
+		int flag;
+		if (column1.x<column2.x)
+		{
+			if ((this.x-this.size/2)<(column1.x+column1.width/2))
+			{
+				flag=1;
+			}
+			else
+			{
+				flag=2;
+			}
+		}
+		else
+		{
+			if ((this.x-this.size/2)<(column2.x+column2.width/2))
+			{
+				flag=2;
+			}
+			else
+			{
+				flag=1;
+			}
+		}
+		
+//		if(flag==1)
+//		{
+//			simulationStep(column1.y);
+//		}
+//		else if(flag==2)
+//		{
+//			simulationStep(column2.y);
+//		}
+		return flag;
+	}
+//	
+//	public void simulationStep(int simulationY)
+//	{
+//		int simulationSpeed=20;  //模拟的速度
+//		if (this.y==simulationY)
+//		{
+//			//空
+//		}
+//		else
+//		{
+//			if(this.y<simulationY)
+//			{
+//				double distance;
+//				distance=simulationSpeed*t-0.5 * g * t * t;
+//				this.y=this.y+(int)(distance);
+//				if(this.y>simulationY)
+//				{
+//					this.y=simulationY;
+//				}
+//				if(this.y==simulationY)
+//				{
+//					angle=0;
+//				}
+//				else
+//				{
+//					//计算小鸟的俯角, 
+//					angle = Math.atan(distance/8);
+//				}
+//			}
+//			else
+//			{
+//				double distance;
+//				distance=simulationSpeed*t-0.5 * g * t * t;
+//				this.y=this.y-(int)(distance);
+//				if(this.y<simulationY)
+//				{
+//					this.y=simulationY;
+//				}	
+//				if(this.y==simulationY)
+//				{
+//					angle=0;
+//				}
+//				else
+//				{
+//					//计算小鸟的仰角, 
+//					angle = -Math.atan(distance/8);
+//				}
+//			}
+//		}
+//	}
+//	
+	//q_learning
+	
+	public int getBirdX()   //获取鸟的x坐标
+	{
+		return this.x;
+	}
+	
+	public int getBirdY()  //获取鸟的y坐标
+	{
+		return this.y;
+	}
+	
+	
+	public void setY(int y)   //训练时的
+	{
+		int distance=3;
+		if (y>this.y)  //俯角
+		{
+			angle = Math.atan(distance/8);
+		}
+ 		else     //仰角
+ 		{
+ 			angle = -Math.atan(distance/8);
+		}
+		this.y=y;
+	}
+	
+	public void setModel(int model)
+	{
+		this.model=model;
+//		if (model==1)  //q_learning模式
+//		{
+//			if(first==0)
+//			{
+//				this.g = 2; //重力加速度
+//				this.v0 = 5; //初始上抛速度
+//	//			this.g=4;
+//	//			this.v0=20;
+//				first=1;
+//			}
+//		}
+//		else
+//		{
+//			this.g = 4; //重力加速度
+//			this.v0 = 20; //初始上抛速度
+//		}
+	}
+	public int getModel()
+	{
+		return model;
 	}
 	
 }
